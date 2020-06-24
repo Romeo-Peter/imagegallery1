@@ -58,7 +58,6 @@ class Images extends Component {
           src={url}
           key={index}
           onClick={() => this.handlePopup(url)}
-
         />
       );
     });

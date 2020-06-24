@@ -11,14 +11,20 @@ if (database) {
   app.post("/images", async (req, res) => {
     console.log('POST /');
 
-    res.header("Access-Control-Allow-Origin", "http://http://localhost:3000");
-    res.set("Access-Control-Allow-Methods", "POST,GET, DELETE, HEAD, OPTIONS");
+    res.set("Access-Control-Allow-Origin", "http://localhost:3000");
+    res.set("Access-Control-Allow-Methods", "POST,GET,DELETE, HEAD, OPTIONS");
 
-    const { url } = req.body;
-    await database.createImage(url);
+    try {
+      const { url } = req.body;
 
-    res.writeHead(200, {"Content-Type": "applicaton/json"})
-    res.json({response: "Image url stored in database"});
+      if (url !== undefined) {
+        await database.createImage(url);
+        res.json({response: "Image url stored in database"});
+      }
+    } catch(err) {
+      res.status(500).json({Error: "Something unexepcted happend"});
+      console.log("Oops:", err.message);
+    }
   })
 
   /*app.delete("/images/:id", async (req, res) => {

@@ -9,7 +9,8 @@ export const createImage = (url) => {
       "credentials": "include"
     },
     data: {url: url}
-  }).then(res => console.log(res.text()));
+  }).then(res => console.log(res.data.response));
+
   console.log("Sent url to server")
 };
 
