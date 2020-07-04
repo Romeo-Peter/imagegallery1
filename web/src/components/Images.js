@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 
 // Ajax function to submit url
-import {createImage} from '../ajax.js';
+import { createImage, listImages, deleteImage } from "../ajax.js";
 
 import "./Images.css";
 import Popup from "./Popup";
@@ -11,14 +11,10 @@ class Images extends Component {
     super(props);
     this.state = {
       imageUrl: "",
-      imageUrlArray: [
-        "https://picsum.photos/200/300?random=1",
-        "https://picsum.photos/200/300?random=2",
-        "https://picsum.photos/200/300?random=3",
-        "https://picsum.photos/200/300?random=4"
-      ],
+      imageUrlArray: [],
       showModial: false,
       popImageUrl: "",
+      popImageId: "",
     };
   }
 
@@ -30,7 +26,7 @@ class Images extends Component {
       imageUrlArray: imageUrlArray,
     });
 
-    // Send url to ajax endpoint to store images
+    // store images data
     createImage(this.state.imageUrl);
   };
 
@@ -39,29 +35,31 @@ class Images extends Component {
     this.setState({
       [e.target.name]: e.target.value,
     });
-    console.log(this.state.imageUrl);
   };
 
-  handlePopup = (url) => {
+  handlePopup = (url, id) => {
     this.setState({
       showModial: !this.state.showModial,
-      popImageUrl: url
+      popImageUrl: url,
+      popImageId: id,
     });
   };
 
-  render() {
-    let imageUrlArray = this.state.imageUrlArray;
-    const images = imageUrlArray.map((url, index) => {
-      return (
-        <img
-          className="singleImage"
-          src={url}
-          key={index}
-          onClick={() => this.handlePopup(url)}
-        />
-      );
-    });
+  // Life cycle
+  componentDidMount() {
+    this.handleOnload();
+  }
 
+  // Request image data
+  async handleOnload() {
+    const data = await listImages();
+    this.setState({
+      imageUrlArray: data,
+    });
+  }
+
+  render() {
+    const imageUrlArray = this.state.imageUrlArray;
     return (
       <div className="Images">
         <form onSubmit={this.imageSubmitter}>
@@ -75,11 +73,25 @@ class Images extends Component {
             Submit Image
           </button>
         </form>
-        {images}
+        {imageUrlArray.length > 1
+          ? imageUrlArray.map((data, index) => (
+              <img
+                className="singleImage"
+                id={data.id}
+                src={data.imageurl}
+                key={index}
+                onClick={() => this.handlePopup(data.imageurl, data.id)}
+                alt=""
+              />
+            ))
+          : console.log("Loading...")}
         {this.state.showModial ? (
           <Popup
             popImageUrl={this.state.popImageUrl}
+            popImageId={this.state.popImageId}
             closePopup={this.handlePopup}
+            // Image data delete props
+            deleteImage={deleteImage}
           />
         ) : null}
       </div>
