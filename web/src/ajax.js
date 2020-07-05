@@ -1,6 +1,8 @@
 import axios from "axios";
 
 export const createImage = (url) => {
+  console.log("Request sent to server");
+
   axios({
     method: "POST",
     url: "http://localhost:8080/images",
@@ -12,14 +14,11 @@ export const createImage = (url) => {
   })
     .then((res) => console.log(res.data.storeResponse))
     .catch((err) => console.log(err));
-
-  console.log("Sent url to server");
 };
 
 export const deleteImage = (id) => {
-  console.log("Image id sent to server");
+  console.log("Request sent to server");
 
-  console.log(id);
   return axios({
     method: "DELETE",
     url: `http://localhost:8080/images/${id}`,
@@ -33,6 +32,8 @@ export const deleteImage = (id) => {
 };
 
 export const listImages = () => {
+  console.log("Request sent to server");
+
   return axios({
     method: "GET",
     url: "http://localhost:8080/images",
@@ -41,6 +42,9 @@ export const listImages = () => {
       credentials: "include",
     },
   })
-    .then((res) => console.log(res.data.imagesResponse))
+    .then((res) => {
+      console.log(res.data.imagesResponse);
+      return res.data.imagesResponse;
+    })
     .catch((err) => console.log(err));
 };
