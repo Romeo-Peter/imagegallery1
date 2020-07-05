@@ -28,6 +28,9 @@ class Images extends Component {
 
     // store images data
     createImage(this.state.imageUrl);
+
+    // Update Gallery
+    this.handleOnload();
   };
 
   handleLinkChange = (e) => {
@@ -50,13 +53,41 @@ class Images extends Component {
     this.handleOnload();
   }
 
+  componentWillUnmount() {
+    this.handleOnload();
+  }
+
   // Request image data
   async handleOnload() {
     const data = await listImages();
+
     this.setState({
       imageUrlArray: data,
     });
   }
+
+  // Delete image data
+  handleDeleteOnPopup = () => {
+    const imageId = this.state.popImageId;
+
+    // Close Popup and delete image
+    this.handlePopup();
+    deleteImage(imageId);
+
+    // Update state
+    this.setState(
+      (state) => {
+        return {
+          imageUrlArray: [
+            state.imageUrlArray.filter((data) => data.id !== imageId),
+          ],
+        };
+      },
+      () => this.handleOnload()
+    );
+
+    console.log(`${this.state.imageUrlArray.length} images left in gallery`);
+  };
 
   render() {
     const imageUrlArray = this.state.imageUrlArray;
@@ -88,10 +119,7 @@ class Images extends Component {
         {this.state.showModial ? (
           <Popup
             popImageUrl={this.state.popImageUrl}
-            popImageId={this.state.popImageId}
-            closePopup={this.handlePopup}
-            // Image data delete props
-            deleteImage={deleteImage}
+            handleClick={this.handleDeleteOnPopup}
           />
         ) : null}
       </div>

@@ -3,18 +3,15 @@ import React, { Component } from "react";
 import "./Images.css";
 
 class App extends Component {
-  // Close popup and delete image data
-  handleOnclick = () => {
-    this.props.closePopup();
-    const imageId = this.props.popImageId;
-    this.props.deleteImage(imageId);
+  handleclick = () => {
+    this.props.handleClick();
   };
 
   render() {
     return (
       <div className="popupParent">
         <div className="popupImage">
-          <button className="imageClosingButton" onClick={this.handleOnclick}>
+          <button className="imageClosingButton" onClick={this.handleclick}>
             X
           </button>
           <img src={this.props.popImageUrl} id={this.props.popImageId} alt="" />
